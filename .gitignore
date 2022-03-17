@@ -1,6 +1,4 @@
 # Visual Studio 2015 user specific files
-GTRacingPro/.vs/
-GTRacingPro/Intermediate/Build/
 # Compiled Object files
 *.slo
 *.lo
@@ -46,8 +44,8 @@ SourceArt/**/*.png
 SourceArt/**/*.tga
 
 # Binary Files
-Binaries/*
-Plugins/*/Binaries/*
+GTRacingPro/Binaries/*
+GTRacingPro/Plugins/*/Binaries/*
 
 # Builds
 GTRacingPro/Build/*
