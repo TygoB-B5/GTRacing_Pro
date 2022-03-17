@@ -40,8 +40,8 @@
 *.VC.opendb
 
 # Precompiled Assets
-SourceArt/**/*.png
-SourceArt/**/*.tga
+GTRacingPro/SourceArt/**/*.png
+GTRacingPro/SourceArt/**/*.tga
 
 # Binary Files
 GTRacingPro/Binaries/*
