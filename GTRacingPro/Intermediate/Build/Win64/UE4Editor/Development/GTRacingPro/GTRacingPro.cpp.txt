@@ -1,0 +1,2 @@
+C:\Users\tygob\Desktop\GTRacing_Pro\GTRacingPro\Intermediate\Build\Win64\UE4Editor\Development\GTRacingPro\Definitions.GTRacingPro.h
+C:\Users\tygob\Desktop\GTRacing_Pro\GTRacingPro\Source\GTRacingPro\GTRacingPro.h

@@ -1,0 +1,15 @@
+/NOLOGO
+/errorReport:prompt
+/MACHINE:x64
+/SUBSYSTEM:WINDOWS
+/DEF
+/NAME:"UE4Editor-GTRacingPro.dll"
+/IGNORE:4221
+/NODEFAULTLIB
+"C:\Users\tygob\Desktop\GTRacing_Pro\GTRacingPro\Intermediate\Build\Win64\GTRacingProEditor\Development\Engine\SharedPCH.Engine.ShadowErrors.h.obj"
+"C:\Users\tygob\Desktop\GTRacing_Pro\GTRacingPro\Intermediate\Build\Win64\UE4Editor\Development\GTRacingPro\GTRacingPro.cpp.obj"
+"C:\Users\tygob\Desktop\GTRacing_Pro\GTRacingPro\Intermediate\Build\Win64\UE4Editor\Development\GTRacingPro\GTRacingProGameModeBase.cpp.obj"
+"C:\Users\tygob\Desktop\GTRacing_Pro\GTRacingPro\Intermediate\Build\Win64\UE4Editor\Development\GTRacingPro\GTRacingPro.init.gen.cpp.obj"
+"C:\Users\tygob\Desktop\GTRacing_Pro\GTRacingPro\Intermediate\Build\Win64\UE4Editor\Development\GTRacingPro\GTRacingProGameModeBase.gen.cpp.obj"
+"C:\Users\tygob\Desktop\GTRacing_Pro\GTRacingPro\Intermediate\Build\Win64\UE4Editor\Development\GTRacingPro\Default.rc2.res"
+/OUT:"C:\Users\tygob\Desktop\GTRacing_Pro\GTRacingPro\Intermediate\Build\Win64\UE4Editor\Development\GTRacingPro\UE4Editor-GTRacingPro.lib"

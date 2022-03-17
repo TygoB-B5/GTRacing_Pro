@@ -1,0 +1,14 @@
+{
+	"Targets": [
+		{
+			"Name": "GTRacingPro",
+			"Path": "C:\\Users\\tygob\\Desktop\\GTRacing_Pro\\GTRacingPro\\Source\\GTRacingPro.Target.cs",
+			"Type": "Game"
+		},
+		{
+			"Name": "GTRacingProEditor",
+			"Path": "C:\\Users\\tygob\\Desktop\\GTRacing_Pro\\GTRacingPro\\Source\\GTRacingProEditor.Target.cs",
+			"Type": "Editor"
+		}
+	]
+}
