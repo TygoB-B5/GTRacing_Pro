@@ -13,5 +13,4 @@ UCLASS()
 class GTRACINGPRO_API AGTRacingProGameModeBase : public AGameModeBase
 {
 	GENERATED_BODY()
-	
 };
