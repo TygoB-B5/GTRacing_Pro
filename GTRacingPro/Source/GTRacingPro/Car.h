@@ -8,15 +8,15 @@
 #include "Camera/CameraComponent.h"
 #include "GameFramework/SpringArmComponent.h"
 
-#include "Vehicle.generated.h"
+#include "Car.generated.h"
 
 UCLASS()
-class GTRACINGPRO_API AVehicle : public AActor
+class GTRACINGPRO_API ACar : public AActor
 {
 	GENERATED_BODY()
 	
 public:	
-	AVehicle();
+	ACar();
 
 protected:
 	virtual void BeginPlay() override;
@@ -27,8 +27,16 @@ public:
 
 	void UpdateAcceleration();
 	void UpdateFrictionBraking();
+	void UpdateMomentumAngle();
+	void UpdateSteering();
+
+private:
+
+	UFUNCTION()
+	void OnHit(UPrimitiveComponent* HitComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, FVector NormalImpulse, const FHitResult& Hit);
 
 public:
+	// Blueprint Changable Properties
 	UPROPERTY(EditAnywhere)
 	USpringArmComponent* SpringArm;
 
@@ -41,37 +49,58 @@ public:
 	UPROPERTY(VisibleAnywhere)
 	UStaticMeshComponent* VehicleMesh;
 
+
+
+	// Blueprint Car Settings
 	UPROPERTY(EditAnywhere, Category = "Characteristics")
-	float Acceleration;
+	float Acceleration = 0.25f;
 
 	UPROPERTY(EditAnywhere, Category = "Characteristics")
-	float TopSpeed;
+	float TopSpeed = 75.0f;
 
 	UPROPERTY(EditAnywhere, Category = "Characteristics")
-	float Handling;
+	float Handling = 0.33f;
 
 	UPROPERTY(EditAnywhere, Category = "Characteristics")
-	float BrakeStrength;
+	float BrakeStrength = 0.33;
 
 	UPROPERTY(EditAnywhere, Category = "Characteristics")
-	float Mass;
+	float Mass = 400;
 
 	UPROPERTY(EditAnywhere, Category = "Characteristics")
-	float Friction;
+	float Friction = 0.1f;
 
 	UPROPERTY(EditAnywhere, Category = "Characteristics")
-	float SteerStrength;
+	float SteeringAmount = 65;
 
+	UPROPERTY(EditAnywhere, Category = "Characteristics")
+	float SteeringSmoothness = 3;
+
+
+	// Blueprint Functions
 	UFUNCTION(BlueprintCallable, Category = "Vehicle")
 	void Throttle(float amount);
 
 	UFUNCTION(BlueprintCallable, Category = "Vehicle")
 	void Steer(float direction);
 
+	UPROPERTY(BlueprintReadOnly, Category = "Vehicle")
+	float GripLevel;
+
+	UPROPERTY(BlueprintReadOnly, Category = "Vehicle")
+	float Rumble;
+
+
+	// Car Movement Variables 
 	float m_Speed = 0;
+	float m_Rotation = 0;
+	FVector m_Momentum = FVector(0, 0, 0);
+
+	// Player Input Variables
 	float m_SteeringInput = 0;
 	float m_Throttle = 0;
 	float m_Brake = 0;
+	bool m_bIsAirborne = false;
 
 	float m_TimeDelta = 0;
 };
