@@ -3,12 +3,10 @@
 #include "Kismet/GameplayStatics.h"
 #include "Engine/World.h"
 #include "Vehicle.h"
+#include "Kismet/KismetMathLibrary.h"
 
-
-// Sets default values
 AVehicle::AVehicle()
 {
- 	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
 
 	Pivot = CreateDefaultSubobject<UBoxComponent>(TEXT("Pivot"));
@@ -18,6 +16,8 @@ AVehicle::AVehicle()
 	SpringArm->SetupAttachment(VehicleMesh);
 	Camera = CreateDefaultSubobject<UCameraComponent>(TEXT("Camera"));
 	Camera->SetupAttachment(SpringArm);
+
+	VehicleMesh->SetWorldRotation(FRotator(0, 0, -90));
 }
 
 // Called when the game starts or when spawned
@@ -28,40 +28,44 @@ void AVehicle::BeginPlay()
 	Pivot->SetSimulatePhysics(true);
 
 	VehicleMesh->SetCollisionEnabled(ECollisionEnabled::Type::QueryAndPhysics);
+	VehicleMesh->SetAllMassScale(Mass);
 }
 
 // Called every frame
 void AVehicle::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
-	TimeDelta = DeltaTime;
+	m_TimeDelta = DeltaTime;
 
-	Pivot->AddWorldOffset(Pivot->GetForwardVector() * Velocity.Y * DeltaTime);
-	Pivot->AddWorldRotation(FRotator(0, ZRotation, 0));
+	UpdateAcceleration();
+	UpdateFrictionBraking();
 
-	ZRotation = FMath::Lerp(ZRotation, 0.0f, TimeDelta * SpringBackStrength);
-	Velocity.Y -= TimeDelta * Velocity.Y < 0 ? -Mass : Mass;
+	Pivot->AddWorldOffset(Pivot->GetForwardVector() * m_Speed * m_TimeDelta * (TopSpeed * 100));
+}
 
+void AVehicle::UpdateAcceleration()
+{
+	float accel = Acceleration  * m_Throttle * m_TimeDelta;
+	float brake = BrakeStrength * m_Brake    * m_TimeDelta;
+
+	float val = m_Speed + accel + -brake;
+
+	m_Speed = FMath::Clamp(val, 0.0f,  1.0f);
+}
+
+void AVehicle::UpdateFrictionBraking()
+{
+	m_Speed = FMath::Clamp(m_Speed - (Friction * m_TimeDelta), 0.0f, 1.0f);
 }
 
 void AVehicle::Throttle(float amount)
 {
-	if (amount > 0)
-	{	
-		Velocity.Y += HP * TimeDelta;
-	}
-	if (amount < 0)
-	{
-		if (Velocity.Y < -200)
-			return;
-
-		Velocity.Y -= BrakeStrength * TimeDelta;
-	}
+	m_Brake = abs(amount < 0 ? amount : 0);
+	m_Throttle = amount > 0 ? amount : 0;
 }
 
 void AVehicle::Steer(float direction)
 {
-	GEngine->AddOnScreenDebugMessage(-1, 1.f, FColor::Red, FString::SanitizeFloat(ZRotation));
-	ZRotation += direction * SteerStrength * TimeDelta;
+	m_SteeringInput = direction;
 }
 

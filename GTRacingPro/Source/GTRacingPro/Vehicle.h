@@ -16,16 +16,17 @@ class GTRACINGPRO_API AVehicle : public AActor
 	GENERATED_BODY()
 	
 public:	
-	// Sets default values for this actor's properties
 	AVehicle();
 
 protected:
-	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
 
 public:	
-	// Called every frame
 	virtual void Tick(float DeltaTime) override;
+
+
+	void UpdateAcceleration();
+	void UpdateFrictionBraking();
 
 public:
 	UPROPERTY(EditAnywhere)
@@ -41,7 +42,10 @@ public:
 	UStaticMeshComponent* VehicleMesh;
 
 	UPROPERTY(EditAnywhere, Category = "Characteristics")
-	float HP;
+	float Acceleration;
+
+	UPROPERTY(EditAnywhere, Category = "Characteristics")
+	float TopSpeed;
 
 	UPROPERTY(EditAnywhere, Category = "Characteristics")
 	float Handling;
@@ -53,10 +57,10 @@ public:
 	float Mass;
 
 	UPROPERTY(EditAnywhere, Category = "Characteristics")
-	float SteerStrength;
+	float Friction;
 
 	UPROPERTY(EditAnywhere, Category = "Characteristics")
-	float SpringBackStrength;
+	float SteerStrength;
 
 	UFUNCTION(BlueprintCallable, Category = "Vehicle")
 	void Throttle(float amount);
@@ -64,8 +68,10 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "Vehicle")
 	void Steer(float direction);
 
-	FVector Velocity = FVector(0, 0, 0);
-	float ZRotation = 0;
+	float m_Speed = 0;
+	float m_SteeringInput = 0;
+	float m_Throttle = 0;
+	float m_Brake = 0;
 
-	float TimeDelta = 0;
+	float m_TimeDelta = 0;
 };
