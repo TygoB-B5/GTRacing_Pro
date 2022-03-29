@@ -52,29 +52,32 @@ public:
 
 
 	// Blueprint Car Settings
-	UPROPERTY(EditAnywhere, Category = "Characteristics")
+	UPROPERTY(EditAnywhere, Category = "Vehicle")
 	float Acceleration = 0.25f;
 
-	UPROPERTY(EditAnywhere, Category = "Characteristics")
+	UPROPERTY(EditAnywhere, Category = "Vehicle")
 	float TopSpeed = 75.0f;
 
-	UPROPERTY(EditAnywhere, Category = "Characteristics")
+	UPROPERTY(EditAnywhere, Category = "Vehicle")
 	float Handling = 0.33f;
 
-	UPROPERTY(EditAnywhere, Category = "Characteristics")
+	UPROPERTY(EditAnywhere, Category = "Vehicle")
 	float BrakeStrength = 0.33;
 
-	UPROPERTY(EditAnywhere, Category = "Characteristics")
+	UPROPERTY(EditAnywhere, Category = "Vehicle")
 	float Mass = 400;
 
-	UPROPERTY(EditAnywhere, Category = "Characteristics")
+	UPROPERTY(EditAnywhere, Category = "Vehicle")
 	float Friction = 0.1f;
 
-	UPROPERTY(EditAnywhere, Category = "Characteristics")
+	UPROPERTY(EditAnywhere, Category = "Vehicle")
 	float SteeringAmount = 65;
 
-	UPROPERTY(EditAnywhere, Category = "Characteristics")
+	UPROPERTY(EditAnywhere, Category = "Vehicle")
 	float SteeringSmoothness = 3;
+
+	UPROPERTY(EditAnywhere, Category = "Vehicle")
+	float RumbleSnensitivity = 0.05f;
 
 
 	// Blueprint Functions
@@ -84,6 +87,8 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "Vehicle")
 	void Steer(float direction);
 
+
+	// Blueprint Read Only
 	UPROPERTY(BlueprintReadOnly, Category = "Vehicle")
 	float GripLevel;
 

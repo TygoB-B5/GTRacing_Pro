@@ -26,10 +26,11 @@ ACar::ACar()
 
 void ACar::BeginPlay()
 {
+	EnableInput(UGameplayStatics::GetPlayerController(GetWorld(), 0));
 	Super::BeginPlay();
-	EnableInput(GetWorld()->GetFirstPlayerController());
 
 	Pivot->SetSimulatePhysics(true);
+	Pivot->SetGenerateOverlapEvents(false);
 
 	VehicleMesh->SetNotifyRigidBodyCollision(true);
 	VehicleMesh->SetGenerateOverlapEvents(true);
@@ -54,9 +55,9 @@ void ACar::Tick(float DeltaTime)
 	Pivot->AddWorldOffset(m_Momentum * m_Speed * m_TimeDelta * (TopSpeed * 100));
 	Pivot->AddWorldRotation(FRotator(0, m_Rotation * SteeringAmount * m_TimeDelta, 0));
 
-	float cornerRumble = (abs(m_Rotation) * m_Speed) * m_Speed > 0.1f ? 0.75f : 0;
-	float gripRumble = GripLevel > 0.6f ? GripLevel : 0;
-	float brakeRumble = m_Brake * m_Speed;
+	float cornerRumble = (abs(m_Rotation) * m_Speed) * m_Speed > 0.1f * RumbleSnensitivity ? 0.75f : 0;
+	float gripRumble = GripLevel > 0.6f * RumbleSnensitivity ? GripLevel : 0;
+	float brakeRumble = m_Brake * m_Speed * RumbleSnensitivity;
 	Rumble = std::max(cornerRumble, std::max(gripRumble, brakeRumble / 2));
 
 	m_bIsAirborne = true;
