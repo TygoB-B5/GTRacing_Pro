@@ -29,6 +29,9 @@ public:
 	void UpdateFrictionBraking();
 	void UpdateMomentumAngle();
 	void UpdateSteering();
+	void UpdateRumble();
+	void UpdateDownforce();
+	void UpdateGripLevel();
 
 private:
 
@@ -56,28 +59,34 @@ public:
 	float Acceleration = 0.25f;
 
 	UPROPERTY(EditAnywhere, Category = "Vehicle")
-	float TopSpeed = 75.0f;
+	float TopSpeed = 100.0f;
 
 	UPROPERTY(EditAnywhere, Category = "Vehicle")
 	float Handling = 0.33f;
 
 	UPROPERTY(EditAnywhere, Category = "Vehicle")
-	float BrakeStrength = 0.33;
+	float BrakeStrength = 0.25f;
 
 	UPROPERTY(EditAnywhere, Category = "Vehicle")
-	float Mass = 400;
+	float Mass = 400.0f;
 
 	UPROPERTY(EditAnywhere, Category = "Vehicle")
-	float Friction = 0.1f;
+	float Friction = 0.05f;
 
 	UPROPERTY(EditAnywhere, Category = "Vehicle")
-	float SteeringAmount = 65;
+	float SteeringAmount = 70.0f;
 
 	UPROPERTY(EditAnywhere, Category = "Vehicle")
 	float SteeringSmoothness = 3;
 
 	UPROPERTY(EditAnywhere, Category = "Vehicle")
-	float RumbleSnensitivity = 0.05f;
+	float RumbleSnensitivity = 0.1f;
+
+	UPROPERTY(EditAnywhere, Category = "Vehicle")
+	float UndersteerAmount = 0.15f;
+
+	UPROPERTY(EditAnywhere, Category = "Vehicle")
+	float BrakeTractionLossMultiplier = 2.0f;
 
 
 	// Blueprint Functions
@@ -99,7 +108,14 @@ public:
 	// Car Movement Variables 
 	float m_Speed = 0;
 	float m_Rotation = 0;
-	FVector m_Momentum = FVector(0, 0, 0);
+	float m_CurrentDownforce = 0;
+	float m_UndersteerAmount = 0;
+
+	float m_AngularGripLevel = 0;
+	float m_SpeedGripLevel = 0;
+	float m_BrakeGripLevel = 0;
+
+	FVector m_CurrentMomentumDirection = FVector(0, 0, 0);
 
 	// Player Input Variables
 	float m_SteeringInput = 0;

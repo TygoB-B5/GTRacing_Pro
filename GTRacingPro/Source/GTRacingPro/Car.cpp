@@ -12,7 +12,6 @@ ACar::ACar()
 
 	// Setup Root object
 	Pivot = CreateDefaultSubobject<UBoxComponent>(TEXT("Pivot"));
-
 	// Setup Vehicle Static Mesh Obeject
 	VehicleMesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("CarMesh"));
 	VehicleMesh->SetupAttachment(Pivot);
@@ -51,16 +50,26 @@ void ACar::Tick(float DeltaTime)
 	UpdateFrictionBraking();
 	UpdateMomentumAngle();
 	UpdateSteering();
+	UpdateRumble();
+	UpdateDownforce();
+	UpdateGripLevel();
 
-	Pivot->AddWorldOffset(m_Momentum * m_Speed * m_TimeDelta * (TopSpeed * 100));
+	Pivot->AddWorldOffset(m_CurrentMomentumDirection * m_Speed * m_TimeDelta * (TopSpeed * 100));
 	Pivot->AddWorldRotation(FRotator(0, m_Rotation * SteeringAmount * m_TimeDelta, 0));
 
-	float cornerRumble = (abs(m_Rotation) * m_Speed) * m_Speed > 0.1f * RumbleSnensitivity ? 0.75f : 0;
-	float gripRumble = GripLevel > 0.6f * RumbleSnensitivity ? GripLevel : 0;
-	float brakeRumble = m_Brake * m_Speed * RumbleSnensitivity;
-	Rumble = std::max(cornerRumble, std::max(gripRumble, brakeRumble / 2));
-
 	m_bIsAirborne = true;
+
+	// Debug Log Variables
+	/*
+	GEngine->AddOnScreenDebugMessage(-1, 0.0f, FColor::Blue, "Grip: " + FString::SanitizeFloat(GripLevel));
+	GEngine->AddOnScreenDebugMessage(-1, 0.0f, FColor::Blue, "Ang Grip: " + FString::SanitizeFloat(m_AngularGripLevel));
+	GEngine->AddOnScreenDebugMessage(-1, 0.0f, FColor::Blue, "Spd Grip: " + FString::SanitizeFloat(m_SpeedGripLevel));
+	GEngine->AddOnScreenDebugMessage(-1, 0.0f, FColor::Blue, "Brk Grip: " + FString::SanitizeFloat(m_BrakeGripLevel));
+	GEngine->AddOnScreenDebugMessage(-1, 0.0f, FColor::Blue, "Speed: " + FString::SanitizeFloat(m_Speed));
+	GEngine->AddOnScreenDebugMessage(-1, 0.0f, FColor::Blue, "Downforce: " + FString::SanitizeFloat(m_CurrentDownforce));
+	GEngine->AddOnScreenDebugMessage(-1, 0.0f, FColor::Blue, "Understeer: " + FString::SanitizeFloat(m_UndersteerAmount));
+	GEngine->AddOnScreenDebugMessage(-1, 0.0f, FColor::Blue, "Rot: " + FString::SanitizeFloat(m_Rotation));
+	*/
 }
 
 void ACar::UpdateAcceleration()
@@ -81,18 +90,41 @@ void ACar::UpdateFrictionBraking()
 
 void ACar::UpdateMomentumAngle()
 {
-	GripLevel = FMath::Clamp((-m_Speed + 1) * abs(m_Rotation) + (-m_Brake * 0.5f), 0.0f, 1.0f);
-	m_Momentum = FMath::Lerp(m_Momentum, Pivot->GetForwardVector(), (GripLevel + Handling) * 10 * m_TimeDelta);
+	m_CurrentMomentumDirection = FMath::Lerp(m_CurrentMomentumDirection, Pivot->GetForwardVector(), GripLevel * 10 * m_TimeDelta);
 }
 
 void ACar::UpdateSteering()
 {
-	m_Rotation = UKismetMathLibrary::Lerp(m_Rotation, m_SteeringInput * FMath::Clamp(UKismetMathLibrary::NormalizeToRange(m_Speed, 0, 0.2f), -0.1f, 1.0f), SteeringSmoothness * m_TimeDelta);
+	float inputRotation = UKismetMathLibrary::Lerp(m_Rotation, m_SteeringInput * FMath::Clamp(UKismetMathLibrary::NormalizeToRange(m_Speed, 0, 0.1f), -0.1f, 1.0f), SteeringSmoothness * m_TimeDelta);
+	m_UndersteerAmount = FMath::Clamp(UKismetMathLibrary::NormalizeToRange(m_CurrentDownforce * GripLevel * UndersteerAmount, 0, 1.0f), 0.0f, 1.0f);
+	m_Rotation = inputRotation * (1 + -m_UndersteerAmount);
 }
 
 void ACar::OnHit(UPrimitiveComponent* HitComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, FVector NormalImpulse, const FHitResult& Hit)
 {
 	m_bIsAirborne = false;
+}
+
+void ACar::UpdateRumble()
+{
+	float cornerRumble = (abs(m_Rotation) * m_Speed) * m_Speed > 0.1f * RumbleSnensitivity ? 0.75f : 0;
+	float gripRumble = GripLevel < 0.6f * RumbleSnensitivity ? GripLevel : 0;
+	float brakeRumble = m_Brake * m_Speed * RumbleSnensitivity;
+	Rumble = std::max(cornerRumble, std::max(gripRumble, brakeRumble / 2));
+}
+
+void ACar::UpdateDownforce()
+{
+	m_CurrentDownforce = m_Speed > 0.1f ? m_Speed : 0;
+}
+
+void ACar::UpdateGripLevel()
+{
+	m_AngularGripLevel = 1 + -(m_CurrentDownforce * abs(m_Rotation) * (1 + -Handling / 2));
+	m_SpeedGripLevel = 1 + -(m_Speed * (1 + -Handling / 2));
+	m_BrakeGripLevel = FMath::Clamp(1 + -(m_Brake * m_CurrentDownforce * ((1 + -Handling) * BrakeTractionLossMultiplier)), 0.0f, 1.0f);
+	GripLevel = std::min(m_AngularGripLevel, std::min(m_SpeedGripLevel, m_BrakeGripLevel));
+
 }
 
 void ACar::Throttle(float amount)
