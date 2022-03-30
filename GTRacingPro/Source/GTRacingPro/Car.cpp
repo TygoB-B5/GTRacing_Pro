@@ -25,7 +25,6 @@ ACar::ACar()
 
 void ACar::BeginPlay()
 {
-	EnableInput(UGameplayStatics::GetPlayerController(GetWorld(), 0));
 	Super::BeginPlay();
 
 	Pivot->SetSimulatePhysics(true);
