@@ -34,18 +34,16 @@ void ACar::BeginPlay()
 	VehicleMesh->SetGenerateOverlapEvents(true);
 	VehicleMesh->SetCollisionEnabled(ECollisionEnabled::Type::QueryAndPhysics);
 	VehicleMesh->SetAllMassScale(Mass);
-	VehicleMesh->OnComponentHit.AddDynamic(this, &ACar::OnHit);
 }
 
 // Called every frame
 void ACar::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
+
 	m_TimeDelta = DeltaTime;
 
-	if(!m_bIsAirborne)
-		UpdateAcceleration();
-
+	UpdateAcceleration();
 	UpdateFrictionBraking();
 	UpdateMomentumAngle();
 	UpdateSteering();
@@ -55,8 +53,6 @@ void ACar::Tick(float DeltaTime)
 
 	Pivot->AddWorldOffset(m_CurrentMomentumDirection * m_Speed * m_TimeDelta * (TopSpeed * 100));
 	Pivot->AddWorldRotation(FRotator(0, m_Rotation * SteeringAmount * m_TimeDelta, 0));
-
-	m_bIsAirborne = true;
 
 	// Debug Log Variables
 	/*
@@ -97,11 +93,6 @@ void ACar::UpdateSteering()
 	float inputRotation = UKismetMathLibrary::Lerp(m_Rotation, m_SteeringInput * FMath::Clamp(UKismetMathLibrary::NormalizeToRange(m_Speed, 0, 0.1f), -0.1f, 1.0f), SteeringSmoothness * m_TimeDelta);
 	m_UndersteerAmount = FMath::Clamp(UKismetMathLibrary::NormalizeToRange(m_CurrentDownforce * GripLevel * UndersteerAmount, 0, 1.0f), 0.0f, 1.0f);
 	m_Rotation = inputRotation * (1 + -m_UndersteerAmount);
-}
-
-void ACar::OnHit(UPrimitiveComponent* HitComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, FVector NormalImpulse, const FHitResult& Hit)
-{
-	m_bIsAirborne = false;
 }
 
 void ACar::UpdateRumble()

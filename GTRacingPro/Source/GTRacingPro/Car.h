@@ -24,6 +24,7 @@ protected:
 public:	
 	virtual void Tick(float DeltaTime) override;
 
+private:
 
 	void UpdateAcceleration();
 	void UpdateFrictionBraking();
@@ -32,11 +33,6 @@ public:
 	void UpdateRumble();
 	void UpdateDownforce();
 	void UpdateGripLevel();
-
-private:
-
-	UFUNCTION()
-	void OnHit(UPrimitiveComponent* HitComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, FVector NormalImpulse, const FHitResult& Hit);
 
 public:
 	// Blueprint Changable Properties
@@ -121,7 +117,6 @@ public:
 	float m_SteeringInput = 0;
 	float m_Throttle = 0;
 	float m_Brake = 0;
-	bool m_bIsAirborne = false;
 
 	float m_TimeDelta = 0;
 };
