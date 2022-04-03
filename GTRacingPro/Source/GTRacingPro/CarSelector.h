@@ -7,8 +7,8 @@
 #include "GameFramework/Actor.h"
 #include "CarSelector.generated.h"
 
-UENUM()
-enum Direction
+UENUM(BlueprintType)
+enum EDirection
 {
 	Left     UMETA(DisplayName = "Left"),
 	Right    UMETA(DisplayName = "Right"),
@@ -41,7 +41,7 @@ public:
 	ACar* GetActiveCar() const { return m_ActiveCar; }
 
 	UFUNCTION(BlueprintCallable, Category = "Input")
-	void SwitchCar(Direction direction);
+	void SwitchCar(EDirection direction);
 
 	ACar* m_ActiveCar;
 	USceneComponent* m_SpawnPoint;

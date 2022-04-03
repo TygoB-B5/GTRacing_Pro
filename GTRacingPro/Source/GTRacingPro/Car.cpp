@@ -51,7 +51,7 @@ void ACar::Tick(float DeltaTime)
 	UpdateDownforce();
 	UpdateGripLevel();
 
-	Pivot->AddWorldOffset(m_CurrentMomentumDirection * m_Speed * m_TimeDelta * (TopSpeed * 100));
+	Pivot->AddWorldOffset(m_CurrentMomentumDirection * Speed * m_TimeDelta * (TopSpeed * 100));
 	Pivot->AddWorldRotation(FRotator(0, m_Rotation * SteeringAmount * m_TimeDelta, 0));
 
 	// Debug Log Variables
@@ -72,15 +72,15 @@ void ACar::UpdateAcceleration()
 	float accel = Acceleration  * m_Throttle * m_TimeDelta;
 	float brake = BrakeStrength * m_Brake    * m_TimeDelta;
 
-	float val = m_Speed + accel + -brake;
+	float val = Speed + accel + -brake;
 
-	m_Speed = FMath::Clamp(val, -0.1f,  1.0f);
+	Speed = FMath::Clamp(val, -0.1f,  1.0f);
 }
 
 void ACar::UpdateFrictionBraking()
 {
-	if(m_Speed > 0)
-		m_Speed = FMath::Clamp(m_Speed - (Friction * m_TimeDelta), -0.1f, 1.0f);
+	if(Speed > 0)
+		Speed = FMath::Clamp(Speed - (Friction * m_TimeDelta), -0.1f, 1.0f);
 }
 
 void ACar::UpdateMomentumAngle()
@@ -90,28 +90,29 @@ void ACar::UpdateMomentumAngle()
 
 void ACar::UpdateSteering()
 {
-	float inputRotation = UKismetMathLibrary::Lerp(m_Rotation, m_SteeringInput * FMath::Clamp(UKismetMathLibrary::NormalizeToRange(m_Speed, 0, 0.1f), -0.1f, 1.0f), SteeringSmoothness * m_TimeDelta);
+	float inputRotation = UKismetMathLibrary::Lerp(m_Rotation, m_SteeringInput * FMath::Clamp(UKismetMathLibrary::NormalizeToRange(Speed, 0, 0.1f), -0.1f, 1.0f), SteeringSmoothness * m_TimeDelta);
 	m_UndersteerAmount = FMath::Clamp(UKismetMathLibrary::NormalizeToRange(m_CurrentDownforce * GripLevel * UndersteerAmount, 0, 1.0f), 0.0f, 1.0f);
 	m_Rotation = inputRotation * (1 + -m_UndersteerAmount);
 }
 
 void ACar::UpdateRumble()
 {
-	float cornerRumble = (abs(m_Rotation) * m_Speed) * m_Speed > 0.1f * RumbleSnensitivity ? 0.75f : 0;
+	float cornerRumble = (abs(m_Rotation) * Speed) * Speed > 0.1f * RumbleSnensitivity ? 0.75f : 0;
 	float gripRumble = GripLevel < 0.6f * RumbleSnensitivity ? GripLevel : 0;
-	float brakeRumble = m_Brake * m_Speed * RumbleSnensitivity;
-	Rumble = std::max(cornerRumble, std::max(gripRumble, brakeRumble / 2));
+	float brakeRumble = m_Brake * Speed * RumbleSnensitivity;
+	float accelerateRumble = (1 + -Speed) * m_Throttle * 0.01f;
+	Rumble = std::max(std::max(cornerRumble * 2, accelerateRumble), std::max(gripRumble * 2, brakeRumble));
 }
 
 void ACar::UpdateDownforce()
 {
-	m_CurrentDownforce = m_Speed > 0.1f ? m_Speed : 0;
+	m_CurrentDownforce = Speed > 0.1f ? Speed : 0;
 }
 
 void ACar::UpdateGripLevel()
 {
 	m_AngularGripLevel = 1 + -(m_CurrentDownforce * abs(m_Rotation) * (1 + -Handling / 2));
-	m_SpeedGripLevel = 1 + -(m_Speed * (1 + -Handling / 2));
+	m_SpeedGripLevel = 1 + -(Speed * (1 + -Handling / 2));
 	m_BrakeGripLevel = FMath::Clamp(1 + -(m_Brake * m_CurrentDownforce * ((1 + -Handling) * BrakeTractionLossMultiplier)), 0.0f, 1.0f);
 	GripLevel = std::min(m_AngularGripLevel, std::min(m_SpeedGripLevel, m_BrakeGripLevel));
 

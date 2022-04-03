@@ -37,12 +37,12 @@ void ACarSelector::SetShownCar(uint32_t index)
 	m_ActiveCar = GetWorld()->SpawnActor<ACar>(Cars[index], m_SpawnPoint->GetComponentLocation(), m_SpawnPoint->GetComponentRotation());
 }
 
-void ACarSelector::SwitchCar(Direction direction)
+void ACarSelector::SwitchCar(EDirection direction)
 {
 	switch (direction)
 	{
-	case Direction::Left:  m_ActiveCarIndex = m_ActiveCarIndex > 0 ? m_ActiveCarIndex - 1 : m_ActiveCarIndex;              break;
-	case Direction::Right: m_ActiveCarIndex = m_ActiveCarIndex < Cars.Num() - 1 ? m_ActiveCarIndex + 1 : m_ActiveCarIndex; break;
+	case EDirection::Left:  m_ActiveCarIndex = m_ActiveCarIndex > 0 ? m_ActiveCarIndex - 1 : m_ActiveCarIndex;              break;
+	case EDirection::Right: m_ActiveCarIndex = m_ActiveCarIndex < Cars.Num() - 1 ? m_ActiveCarIndex + 1 : m_ActiveCarIndex; break;
 	}
 
 	SetShownCar(m_ActiveCarIndex);

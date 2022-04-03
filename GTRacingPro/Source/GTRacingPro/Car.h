@@ -100,9 +100,10 @@ public:
 	UPROPERTY(BlueprintReadOnly, Category = "Vehicle")
 	float Rumble;
 
+	UPROPERTY(BlueprintReadOnly, Category = "Vehicle")
+	float Speed = 0;
 
 	// Car Movement Variables 
-	float m_Speed = 0;
 	float m_Rotation = 0;
 	float m_CurrentDownforce = 0;
 	float m_UndersteerAmount = 0;
