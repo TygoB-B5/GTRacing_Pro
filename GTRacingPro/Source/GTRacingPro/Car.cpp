@@ -100,8 +100,7 @@ void ACar::UpdateRumble()
 	float cornerRumble = (abs(m_Rotation) * Speed) * Speed > 0.1f * RumbleSnensitivity ? 0.75f : 0;
 	float gripRumble = GripLevel < 0.6f * RumbleSnensitivity ? GripLevel : 0;
 	float brakeRumble = m_Brake * Speed * RumbleSnensitivity;
-	float accelerateRumble = (1 + -Speed) * m_Throttle * 0.01f;
-	Rumble = std::max(std::max(cornerRumble * 2, accelerateRumble), std::max(gripRumble * 2, brakeRumble));
+	Rumble = std::max(cornerRumble * 2, std::max(gripRumble * 2, brakeRumble));
 }
 
 void ACar::UpdateDownforce()
