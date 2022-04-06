@@ -41,8 +41,8 @@ void ACarSelector::SwitchCar(EDirection direction)
 {
 	switch (direction)
 	{
-	case EDirection::Left:  m_ActiveCarIndex = m_ActiveCarIndex > 0 ? m_ActiveCarIndex - 1 : Cars.Num() - 1;                break;
-	case EDirection::Right: m_ActiveCarIndex = m_ActiveCarIndex < Cars.Num() - 1 ? m_ActiveCarIndex + 1 : m_ActiveCarIndex; break;
+	case EDirection::Left:  m_ActiveCarIndex = m_ActiveCarIndex > 0 ? m_ActiveCarIndex - 1 : Cars.Num() - 1;  break;
+	case EDirection::Right: m_ActiveCarIndex = m_ActiveCarIndex < Cars.Num() - 1 ? m_ActiveCarIndex + 1 : 0 ; break;
 	}
 
 	SetShownCar(m_ActiveCarIndex);
